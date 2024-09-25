@@ -1,24 +1,29 @@
-﻿using com.sun.security.ntlm;
-using EasyAutomationFramework;
-using Newtonsoft.Json;
+﻿
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Globalization;
+using System.Net.Http;
+using Newtonsoft.Json;
+using RobotCepWorker.Models;
 
 namespace RobotCepWorker.Driver
 {
-    private static readonly HttpClient endereco = new HttpClient();
-
-    public static async Task<EnderecoModel> BuscarEnderecoAsync(string cep)
+    public class CepService
     {
-        string url = $"https://viacep.com.br/ws/{cep}/json/";
-        HttpResponseMessage response = await client.GetAsync(url);
-        response.EnsureSuccessStatusCode();
-        string responseBody = await response.Content.ReadAsStringAsync();
+        private static readonly HttpClient client = new HttpClient();
 
-        EnderecoModel endereco = JsonConvert.DeserializeObject<EnderecoModel>(responseBody);
-        return endereco;
+        public static EnderecoObtidoModel BuscarEndereco(EnderecoSolicitadoModel dados)
+        {
+            string url = $"https://viacep.com.br/ws/{dados.CEP}/json/";
+            HttpResponseMessage response = client.GetAsync(url).Result;
+            
+            response.EnsureSuccessStatusCode();
+            string responseBody = response.Content.ReadAsStringAsync().Result;
+
+            EnderecoObtidoModel endereco = JsonConvert.DeserializeObject<EnderecoObtidoModel>(responseBody);
+
+     
+
+            return endereco;
+        }
     }
 }
